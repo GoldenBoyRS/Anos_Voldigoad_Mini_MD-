@@ -1,0 +1,647 @@
+<!-- Refonte by 𝐀𝐍𝐎𝐒_𝐕𝐎𝐋𝐃𝐈𝐆𝐎𝐀𝐃_𝐌𝐈𝐍𝐈_𝐌𝐃 — Dev: GoldenBoy Dev™ — 2026 -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="𝐀𝐍𝐎𝐒_𝐕𝐎𝐋𝐃𝐈𝐆𝐎𝐀𝐃_𝐌𝐈𝐍𝐈_𝐌𝐃 — bot WhatsApp. Développé par GoldenBoy Dev™.">
+<title>👑 𝐀𝐍𝐎𝐒_𝐕𝐎𝐋𝐃𝐈𝐆𝐎𝐀𝐃_𝐌𝐈𝐍𝐈_𝐌𝐃 👑</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* ==========================================================================
+   TOKENS
+   ========================================================================== */
+:root {
+    --bg: #0a0a0f;
+    --bg-alt: #12121a;
+    --surface: rgba(255, 255, 255, 0.04);
+    --surface-border: rgba(255, 255, 255, 0.08);
+    --violet: #a855f7;
+    --magenta: #ec4899;
+    --cyan: #22d3ee;
+    --whatsapp: #25D366;
+    --text: #f2f2f7;
+    --text-dim: #9797ab;
+    --text-faint: #5b5b6e;
+    --radius-lg: 24px;
+    --radius-md: 16px;
+    --radius-sm: 10px;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+@media (prefers-reduced-motion: reduce) {
+    * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+}
+
+html, body {
+    height: 100%;
+    overflow: hidden; /* chaque écran gère son propre défilement interne si besoin */
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    position: relative;
+    background-image:
+        radial-gradient(ellipse at 15% 20%, rgba(168, 85, 247, 0.08) 0%, transparent 55%),
+        radial-gradient(ellipse at 85% 80%, rgba(34, 211, 238, 0.07) 0%, transparent 55%);
+}
+
+::selection { background: var(--violet); color: #fff; }
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; }
+:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; border-radius: 4px; }
+
+.gradient-text {
+    background: linear-gradient(100deg, var(--violet), var(--magenta) 45%, var(--cyan));
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradientShift 9s ease infinite;
+}
+@keyframes gradientShift { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+
+h1, h2, h3 { font-family: 'Space Grotesk', sans-serif; font-weight: 700; line-height: 1.15; letter-spacing: -0.02em; }
+
+/* Particules flottantes (ambiance, discrètes) */
+.particles { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+.particle {
+    position: absolute;
+    width: var(--s, 3px); height: var(--s, 3px);
+    border-radius: 50%;
+    background: var(--c, var(--cyan));
+    opacity: 0.5;
+    animation: floatUp var(--d, 14s) linear infinite;
+    bottom: -10px;
+}
+@keyframes floatUp {
+    0% { transform: translateY(0) translateX(0); opacity: 0; }
+    10% { opacity: 0.6; }
+    90% { opacity: 0.4; }
+    100% { transform: translateY(-110vh) translateX(var(--x, 20px)); opacity: 0; }
+}
+
+/* ==========================================================================
+   ÉCRANS — architecture 3 pages plein écran
+   ========================================================================== */
+.screen {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    display: none;
+    min-height: 100vh;
+    min-height: 100dvh;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    opacity: 0;
+    transform: scale(0.96);
+    overflow-y: auto;
+}
+
+.screen.active {
+    display: flex;
+    animation: screenIn 0.55s var(--ease) forwards;
+}
+
+.screen.leaving {
+    animation: screenOut 0.4s var(--ease) forwards;
+}
+
+@keyframes screenIn {
+    from { opacity: 0; transform: scale(0.96); }
+    to { opacity: 1; transform: scale(1); }
+}
+@keyframes screenOut {
+    from { opacity: 1; transform: scale(1); }
+    to { opacity: 0; transform: scale(1.04); }
+}
+
+.screen-inner { width: 100%; max-width: 460px; text-align: center; }
+
+.credit {
+    position: absolute;
+    bottom: 22px;
+    left: 0; right: 0;
+    text-align: center;
+    font-size: 0.72rem;
+    color: var(--text-faint);
+    letter-spacing: 0.4px;
+}
+.credit strong { color: var(--text-dim); font-weight: 600; }
+
+/* ==========================================================================
+   ÉCRAN 1 — LANDING "CLIQUEZ POUR ENTRER"
+   ========================================================================== */
+#screen-enter .logo-mark {
+    font-size: clamp(1.8rem, 6vw, 3rem);
+    margin-bottom: 10px;
+}
+#screen-enter .logo-sub {
+    font-size: 0.82rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin-bottom: 48px;
+}
+
+.enter-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 20px 42px;
+    border-radius: 999px;
+    border: none;
+    cursor: pointer;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #fff;
+    background: linear-gradient(115deg, var(--violet), var(--magenta), var(--cyan));
+    background-size: 220% auto;
+    transition: background-position 0.6s var(--ease), transform 0.3s var(--ease), box-shadow 0.3s var(--ease);
+    box-shadow: 0 0 0 0 rgba(168, 85, 247, 0.5);
+    animation: enterPulse 2.4s ease-in-out infinite;
+}
+.enter-btn:hover {
+    background-position: 100% 0;
+    transform: translateY(-3px) scale(1.03);
+}
+.enter-btn:active { transform: translateY(0) scale(0.98); }
+
+@keyframes enterPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(168, 85, 247, 0.35), 0 10px 30px rgba(168,85,247,0.25); }
+    50% { box-shadow: 0 0 0 14px rgba(168, 85, 247, 0), 0 10px 40px rgba(168,85,247,0.35); }
+}
+
+/* ==========================================================================
+   ÉCRAN 2 — SAISIE DU NUMÉRO
+   ========================================================================== */
+.glass-card {
+    position: relative;
+    background: rgba(16, 16, 24, 0.72);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-radius: var(--radius-lg);
+    padding: 40px 30px;
+    border: 1px solid var(--surface-border);
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255,255,255,0.05);
+}
+
+.glass-card::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: var(--radius-lg);
+    padding: 1px;
+    background: linear-gradient(135deg, rgba(168,85,247,0.5), rgba(34,211,238,0.4), transparent 60%);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+}
+
+.glass-card h2 { font-size: 1.4rem; margin-bottom: 8px; }
+.glass-card .sub { font-size: 0.85rem; color: var(--text-dim); margin-bottom: 28px; line-height: 1.5; }
+
+.phone-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+select#country-code {
+    border: 1.5px solid var(--surface-border);
+    outline: none;
+    padding: 0 10px;
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.03);
+    color: #fff;
+    font-size: 0.95rem;
+    font-family: 'Inter', sans-serif;
+    max-width: 108px;
+}
+
+input#number {
+    flex: 1;
+    min-width: 0;
+    border: 1.5px solid var(--surface-border);
+    outline: none;
+    padding: 15px 16px;
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.03);
+    color: #fff;
+    text-align: left;
+    font-size: 1rem;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.3s var(--ease);
+}
+
+input#number:focus, select#country-code:focus {
+    border-color: rgba(168, 85, 247, 0.5);
+    box-shadow: 0 0 0 4px rgba(168, 85, 247, 0.12);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+input#number::placeholder { color: #55556a; }
+
+.field-error {
+    text-align: left;
+    font-size: 0.78rem;
+    color: #ff5d7a;
+    min-height: 18px;
+    margin: 6px 2px 14px;
+    opacity: 0;
+    transform: translateY(-4px);
+    transition: opacity 0.25s var(--ease), transform 0.25s var(--ease);
+}
+.field-error.show { opacity: 1; transform: translateY(0); }
+
+.rgb-btn {
+    width: 100%;
+    border: none;
+    border-radius: var(--radius-md);
+    padding: 16px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    cursor: pointer;
+    color: #fff;
+    background: linear-gradient(115deg, var(--violet), var(--magenta), var(--cyan));
+    background-size: 220% auto;
+    transition: background-position 0.6s var(--ease), transform 0.3s var(--ease), box-shadow 0.3s var(--ease);
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.rgb-btn:hover { background-position: 100% 0; transform: translateY(-2px); box-shadow: 0 14px 34px rgba(168, 85, 247, 0.28); }
+.rgb-btn:active { transform: translateY(0); }
+.rgb-btn:disabled { opacity: 0.6; cursor: wait; transform: none; }
+
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 22px;
+    font-size: 0.82rem;
+    color: var(--text-faint);
+    transition: color 0.25s var(--ease);
+}
+.back-link:hover { color: var(--text-dim); }
+
+/* ==========================================================================
+   ÉCRAN 3 — RÉSULTAT / CODE DE PAIR
+   ========================================================================== */
+#screen-pair .glass-card h2 { margin-bottom: 4px; }
+#screen-pair .sub { margin-bottom: 26px; }
+
+.code-display {
+    border-radius: var(--radius-md);
+    padding: 2px;
+    background: linear-gradient(115deg, var(--violet), var(--cyan));
+    margin-bottom: 22px;
+}
+.code-inner {
+    background: var(--bg-alt);
+    border-radius: calc(var(--radius-md) - 2px);
+    padding: 22px 16px;
+    min-height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 6px;
+}
+
+/* Effet "typing" sur le code */
+.code-inner.typing span {
+    opacity: 0;
+    animation: typeIn 0.3s ease forwards;
+}
+@keyframes typeIn { to { opacity: 1; } }
+
+.pair-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    padding: 14px 20px;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    font-size: 0.92rem;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease), border-color 0.3s var(--ease), background 0.3s var(--ease);
+    width: 100%;
+}
+.btn-whatsapp { background: var(--whatsapp); color: #06210f; }
+.btn-whatsapp:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(37, 211, 102, 0.3); }
+
+.btn-ghost { background: var(--surface); border-color: var(--surface-border); color: var(--text); }
+.btn-ghost:hover { border-color: rgba(255,255,255,0.24); transform: translateY(-2px); }
+
+.copy-toast {
+    position: fixed;
+    bottom: 90px;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    background: var(--bg-alt);
+    border: 1px solid var(--surface-border);
+    color: var(--text);
+    padding: 10px 18px;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    z-index: 50;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s var(--ease), transform 0.3s var(--ease);
+}
+.copy-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+.badge-group {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 24px;
+}
+.badge {
+    padding: 5px 13px;
+    border-radius: 999px;
+    background: var(--surface);
+    border: 1px solid var(--surface-border);
+    font-size: 0.68rem;
+    letter-spacing: 0.4px;
+    color: var(--text-dim);
+    font-weight: 500;
+}
+
+@media (max-width: 480px) {
+    .glass-card { padding: 30px 20px; }
+    .phone-row { flex-direction: column; }
+    select#country-code { max-width: none; padding: 12px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Particules d'ambiance -->
+<div class="particles" aria-hidden="true">
+    <span class="particle" style="left:8%;  --s:3px; --c:#a855f7; --d:16s; --x:24px;"></span>
+    <span class="particle" style="left:20%; --s:2px; --c:#22d3ee; --d:13s; --x:-18px;"></span>
+    <span class="particle" style="left:35%; --s:4px; --c:#ec4899; --d:19s; --x:12px;"></span>
+    <span class="particle" style="left:52%; --s:2px; --c:#22d3ee; --d:15s; --x:-22px;"></span>
+    <span class="particle" style="left:68%; --s:3px; --c:#a855f7; --d:17s; --x:16px;"></span>
+    <span class="particle" style="left:80%; --s:2px; --c:#ec4899; --d:12s; --x:-14px;"></span>
+    <span class="particle" style="left:92%; --s:3px; --c:#22d3ee; --d:18s; --x:20px;"></span>
+</div>
+
+<!-- ÉCRAN 1 : LANDING "CLIQUEZ POUR ENTRER" -->
+<section class="screen active" id="screen-enter" aria-label="Accueil">
+    <div class="screen-inner">
+        <div class="logo-mark gradient-text">👑 𝐀𝐍𝐎𝐒_𝐕𝐎𝐋𝐃𝐈𝐆𝐎𝐀𝐃_𝐌𝐈𝐍𝐈_𝐌𝐃 👑</div>
+        <p class="logo-sub">Bot WhatsApp nouvelle génération</p>
+        <button class="enter-btn" id="btn-enter" aria-label="Cliquez pour entrer">
+            🚀 Cliquez pour entrer
+        </button>
+    </div>
+    <p class="credit">Développé par <strong>GoldenBoy Dev™</strong></p>
+</section>
+
+<!-- ÉCRAN 2 : SAISIE DU NUMÉRO -->
+<section class="screen" id="screen-phone" aria-label="Saisie du numéro WhatsApp">
+    <div class="screen-inner">
+        <div class="glass-card">
+            <h2 class="gradient-text">📲 Entrez votre numéro WhatsApp</h2>
+            <p class="sub">Pour connecter 𝐀𝐍𝐎𝐒_𝐕𝐎𝐋𝐃𝐈𝐆𝐎𝐀𝐃_𝐌𝐈𝐍𝐈_𝐌𝐃 à votre compte</p>
+
+            <div class="phone-row">
+                <select id="country-code" aria-label="Indicatif pays">
+                    <option value="+509">🇭🇹 +509</option>
+                    <option value="+225">🇨🇮 +225</option>
+                    <option value="+33">🇫🇷 +33</option>
+                    <option value="+1">🇺🇸 +1</option>
+                    <option value="+243">🇨🇩 +243</option>
+                    <option value="+221">🇸🇳 +221</option>
+                    <option value="+92">🇵🇰 +92</option>
+                    <option value="+91">🇮🇳 +91</option>
+                    <option value="+44">🇬🇧 +44</option>
+                    <option value="+other">🌍 Autre</option>
+                </select>
+                <input type="tel" id="number" placeholder="3237045919" inputmode="numeric" aria-label="Numéro WhatsApp sans indicatif">
+            </div>
+            <div class="field-error" id="phone-error"></div>
+
+            <button class="rgb-btn" id="btn-generate">🔗 Générer le code de pair</button>
+
+            <a href="#enter" class="back-link" id="btn-back-1">← Retour à l'accueil</a>
+        </div>
+    </div>
+    <p class="credit">Développé par <strong>GoldenBoy Dev™</strong></p>
+</section>
+
+<!-- ÉCRAN 3 : CODE DE PAIR / RÉSULTAT -->
+<section class="screen" id="screen-pair" aria-label="Code de jumelage">
+    <div class="screen-inner">
+        <div class="glass-card">
+            <h2 class="gradient-text">Votre code de jumelage</h2>
+            <p class="sub" id="pair-sub">Saisissez ce code dans WhatsApp : Appareils liés</p>
+
+            <div class="code-display">
+                <div class="code-inner" id="codeBox">----</div>
+            </div>
+
+            <div class="pair-actions">
+                <button class="btn btn-ghost" id="btn-copy">📋 Copier le code</button>
+                <a href="https://wa.me/" target="_blank" rel="noopener" class="btn btn-whatsapp">💬 Ouvrir WhatsApp</a>
+                <a href="#phone" class="btn btn-ghost" id="btn-restart">🔄 Recommencer</a>
+            </div>
+
+            <div class="badge-group">
+                <span class="badge">🤖 BOT WHATSAPP</span>
+                <span class="badge">⚡ ANOS_VOLDIGOAD_MINI_MD</span>
+                <span class="badge">✨ 2026</span>
+            </div>
+        </div>
+    </div>
+    <p class="credit">Développé par <strong>GoldenBoy Dev™</strong></p>
+</section>
+
+<div class="copy-toast" id="copy-toast">Code copié ✅</div>
+
+<script>
+/* ==========================================================================
+   NAVIGATION ENTRE ÉCRANS (hash routing + transitions fade/scale)
+   ========================================================================== */
+const screens = {
+    enter: document.getElementById("screen-enter"),
+    phone: document.getElementById("screen-phone"),
+    pair:  document.getElementById("screen-pair"),
+};
+
+let currentScreen = "enter";
+
+function goToScreen(name) {
+    if (!screens[name] || name === currentScreen && screens[name].classList.contains("active")) return;
+
+    const outgoing = screens[currentScreen];
+    const incoming = screens[name];
+
+    outgoing.classList.add("leaving");
+    outgoing.classList.remove("active");
+
+    setTimeout(() => {
+        outgoing.classList.remove("leaving");
+        outgoing.style.display = "none";
+
+        incoming.style.display = "flex";
+        // force reflow pour rejouer l'animation d'entrée
+        void incoming.offsetWidth;
+        incoming.classList.add("active");
+
+        currentScreen = name;
+        window.scrollTo(0, 0);
+    }, 400);
+
+    if (location.hash !== "#" + name) {
+        history.pushState(null, "", "#" + name);
+    }
+}
+
+window.addEventListener("hashchange", () => {
+    const target = location.hash.replace("#", "") || "enter";
+    if (screens[target]) goToScreen(target);
+});
+
+// Point d'entrée : respecter un hash déjà présent dans l'URL au chargement
+window.addEventListener("DOMContentLoaded", () => {
+    const initial = location.hash.replace("#", "");
+    if (initial && screens[initial] && initial !== "enter") {
+        screens.enter.classList.remove("active");
+        screens.enter.style.display = "none";
+        screens[initial].classList.add("active");
+        currentScreen = initial;
+    } else {
+        history.replaceState(null, "", "#enter");
+    }
+});
+
+document.getElementById("btn-enter").addEventListener("click", () => goToScreen("phone"));
+document.getElementById("btn-back-1").addEventListener("click", (e) => { e.preventDefault(); goToScreen("enter"); });
+document.getElementById("btn-restart").addEventListener("click", (e) => { e.preventDefault(); goToScreen("phone"); });
+
+/* ==========================================================================
+   VALIDATION + GÉNÉRATION DU CODE
+   (fonctionnalité d'origine getCode() conservée dans sa logique de fetch)
+   ========================================================================== */
+const numberInput = document.getElementById("number");
+const countrySelect = document.getElementById("country-code");
+const phoneError = document.getElementById("phone-error");
+const generateBtn = document.getElementById("btn-generate");
+const codeBox = document.getElementById("codeBox");
+
+function showPhoneError(msg) {
+    phoneError.textContent = msg;
+    phoneError.classList.add("show");
+}
+function clearPhoneError() {
+    phoneError.textContent = "";
+    phoneError.classList.remove("show");
+}
+
+function typeCode(text) {
+    codeBox.classList.remove("typing");
+    codeBox.innerHTML = "";
+    void codeBox.offsetWidth;
+    codeBox.classList.add("typing");
+    [...text].forEach((ch, i) => {
+        const span = document.createElement("span");
+        span.textContent = ch;
+        span.style.animationDelay = (i * 0.05) + "s";
+        codeBox.appendChild(span);
+    });
+}
+
+async function getCode() {
+    const rawNum = numberInput.value.replace(/[^0-9]/g, '');
+    const cc = countrySelect.value;
+
+    clearPhoneError();
+
+    // Format international requis
+    if (!rawNum || rawNum.length < 7) {
+        showPhoneError("⚠️ Entrez un numéro WhatsApp valide au format international.");
+        numberInput.focus();
+        return;
+    }
+    if (cc === "+other") {
+        showPhoneError("⚠️ Sélectionnez votre indicatif pays.");
+        return;
+    }
+
+    const fullNumber = cc.replace("+", "") + rawNum;
+
+    generateBtn.disabled = true;
+    generateBtn.textContent = "Connexion...";
+
+    goToScreen("pair");
+    typeCode("CONNECTING");
+
+    try {
+        const res = await fetch(`/code?number=${fullNumber}`);
+        const data = await res.json();
+
+        if (data.code) {
+            typeCode(data.code);
+        } else {
+            typeCode("SERVER FULL");
+        }
+    } catch (e) {
+        typeCode("SERVER IS FULL");
+    } finally {
+        generateBtn.disabled = false;
+        generateBtn.textContent = "🔗 Générer le code de pair";
+    }
+}
+
+generateBtn.addEventListener("click", getCode);
+numberInput.addEventListener("keydown", function (e) {
+    if (e.key === "Enter") {
+        e.preventDefault();
+        getCode();
+    }
+});
+
+/* ==========================================================================
+   COPIER LE CODE
+   ========================================================================== */
+document.getElementById("btn-copy").addEventListener("click", async () => {
+    const text = codeBox.textContent.trim();
+    const toast = document.getElementById("copy-toast");
+    try {
+        await navigator.clipboard.writeText(text);
+    } catch (e) {
+        // fallback silencieux si l'API clipboard est indisponible
+    }
+    toast.classList.add("show");
+    setTimeout(() => toast.classList.remove("show"), 1800);
+});
+</script>
+
+</body>
+</html>

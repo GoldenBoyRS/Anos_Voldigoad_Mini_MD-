@@ -1,0 +1,29 @@
+{
+  "name": "anos_voldigoad_mini_md",
+  "version": "4.0.0",
+  "description": "WhatsApp Multi-Session Engine v4.0 by GoldenBoy DEV",
+  "main": "index.js",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "check": "node scripts/check.js",
+    "test": "node tests/run-tests.js",
+    "benchmark": "node scripts/benchmark.js"
+  },
+  "dependencies": {
+    "@whiskeysockets/baileys": "6.7.9",
+    "axios": "latest",
+    "cors": "latest",
+    "dotenv": "latest",
+    "express": "^4.18.2",
+    "fs-extra": "^11.2.0",
+    "pino": "^8.17.0",
+    "yt-search": "latest",
+    "fluent-ffmpeg": "^2.1.2",
+    "@ffmpeg-installer/ffmpeg": "^1.1.0",
+    "file-type": "21.0.0",
+    "moment-timezone": "^0.6.0"
+  }
+}

@@ -1,167 +1,144 @@
 <div align="center">
 
-# 𝐀𝐍𝐎𝐒_𝐕𝐎𝐋𝐃𝐈𝐆𝐎𝐀𝐃_𝐌𝐈𝐍𝐈_𝐌𝐃
+# 👑 𝐀𝐍𝐎𝐒_𝐕𝐎𝐋𝐃𝐈𝐆𝐎𝐀𝐃_𝐌𝐈𝐍𝐈_𝐌𝐃 v4.0 👑
 
-### 🤖 Bot WhatsApp Multi-Fonctions — Rapide, Stable, Personnalisable
-
-![Node.js](https://img.shields.io/badge/Node.js-18%2B-339933?style=for-the-badge&logo=node.js&logoColor=white)
-![WhatsApp](https://img.shields.io/badge/WhatsApp-Baileys-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)
-![License](https://img.shields.io/badge/Licence-MIT-blue?style=for-the-badge)
-![Status](https://img.shields.io/badge/Statut-Actif-success?style=for-the-badge)
+### 🚀 Moteur WhatsApp Multi-Session Ultra-Léger, Évolutif & Haute Résilience
+**Développé par GoldenBoy Dev™**
 
 </div>
 
 ---
 
-## 📋 À propos
+## 🌟 À Propos de la Version 4.0
 
-**𝐀𝐍𝐎𝐒_𝐕𝐎𝐋𝐃𝐈𝐆𝐎𝐀𝐃_𝐌𝐈𝐍𝐈_𝐌𝐃** est un bot WhatsApp basé sur **Baileys**, conçu pour automatiser et enrichir la gestion de vos discussions et groupes : téléchargements multi-plateformes, stickers, outils d'administration de groupe, commandes système et bien plus, le tout piloté par un système de plugins simple à étendre.
+**ANOS VOLDIGOAD MINI MD v4.0** est une refonte complète du moteur de bot WhatsApp Baileys multi-session. Conçu pour concilier performance extrême, empreinte mémoire minimale et fiabilité sans compromis, il résout l'ensemble des problématiques de concurrence, de fuites mémoire et de gestion de sessions.
 
-👨‍💻 **Développeur :** GoldenBoy DEV
-
----
-
-## ✨ Fonctionnalités
-
-### 🛠️ Système & Général
-| Commande | Description |
-|---|---|
-| `.ping` | Vérifie la vitesse de réponse du bot en temps réel |
-| `.alive` / `.main-alive` | Vérifie que le bot est actif et affiche son statut/uptime |
-| `.allmenu` | Affiche la liste complète des commandes disponibles |
-| `.generale` | Vérifie la latence et les ressources système |
-| `.online` | Affiche les membres en ligne dans le groupe (Admins & Owner) |
-
-### 📥 Téléchargement
-| Commande | Description |
-|---|---|
-| `.song` | Recherche et téléchargement de musique YouTube (MP3) |
-| `.video` | Téléchargement rapide de vidéos YouTube |
-| `.yts` | Recherche de vidéos sur YouTube |
-| `.ig` | Téléchargement de vidéos/reels Instagram |
-| `.fb` | Téléchargement de vidéos Facebook |
-| `.apk` | Téléchargement d'applications via Aptoide |
-
-### 🎨 Créatif
-| Commande | Description |
-|---|---|
-| `.attp` | Convertit un texte en sticker animé |
-| `.ss` | Capture d'écran HD d'un site web |
-
-### 👥 Groupe
-| Commande | Description |
-|---|---|
-| `.gc-setting` | Affiche les demandes d'adhésion en attente |
-| `.groupstatus` | Publie un texte ou média dans les statuts WhatsApp |
-| `.anticall` | Active/désactive les messages de bienvenue |
-
-### ⚙️ Administration (Owner)
-| Commande | Description |
-|---|---|
-| `.set-identity` | Change le nom du bot |
-| `.autobio` | Active/désactive la mise à jour automatique de la bio |
-| `.antidelete` | Active/désactive la récupération des messages supprimés |
-| `.unblock` | Débloque un utilisateur |
-| `.all-settings` | Gère les réglages globaux du bot |
+### Points Clés v4.0
+- **Suppression automatique obligatoire des sessions déconnectées définitivement :** Dès qu'un compte est déconnecté par WhatsApp (code 401, `loggedOut`, `badSession` ou demande utilisateur), ses credentials et son sous-dossier de session sont effacés de manière sécurisée et vérifiée (procédure stricte en 18 étapes).
+- **Préservation absolue des credentials sur coupure réseau :** Une simple interruption internet, un timeout ou un redémarrage du serveur ne supprime JAMAIS les credentials. En cas de dépassement des tentatives de reconnexion, la session est mise en pause (`paused`) sur le disque sans perte de données.
+- **Restauration par lots (Batch Restore) :** Au boot, les sessions valides sont restaurées progressivement (lots configurables de 20 avec délai) pour éviter les pics de charge CPU et RAM.
+- **Nettoyage automatique au boot :** Reprise et finalisation des suppressions interrompues par un arrêt inopiné du processus grâce aux marqueurs `.deleting`.
+- **Backoff exponentiel avec Jitter :** Évite l'effet de ruée (*thundering herd*) lors d'une reconnexion générale.
+- **Sécurité Path Traversal :** Vérification canonique stricte garantissant qu'aucune opération fichier ne peut s'échapper du dossier autorisé `sessions/`.
+- **Panneau d'administration responsive :** Observabilité temps réel (utilisateurs enregistrés, sessions sur disque, connexions actives, RAM RSS, CPU, Event Loop Lag et journal d'audit des suppressions).
 
 ---
 
-## 🚀 Installation
+## ⚙️ Prérequis & Installation
 
-### Prérequis
-- [Node.js](https://nodejs.org/) 18 ou supérieur
-- Un compte WhatsApp dédié au bot
-- (Optionnel) Une base MongoDB pour la persistance de session
+- **Node.js :** 20.x ou 22.x
+- **Système :** Linux (Ubuntu/Debian recommandé), macOS ou conteneur Docker.
+- **RAM recommandée :**
+  - Jusqu'à 50 connexions actives : 1 Go à 2 Go de RAM
+  - Jusqu'à 200 connexions actives : 4 Go de RAM
+  - Jusqu'à 500 connexions actives : 8 Go à 16 Go de RAM
 
-### Étapes
+### Installation Rapide
 
 ```bash
-# 1. Cloner le dépôt
-git clone https://github.com/votre-utilisateur/ANOS_VOLDIGOAD_MINI_MD.git
-cd ANOS_VOLDIGOAD_MINI_MD
+# 1. Cloner ou extraire le projet
+cd anos-voldigoad-mini-md-v4.0
 
 # 2. Installer les dépendances
 npm install
 
-# 3. Configurer les variables d'environnement
+# 3. Configurer l'environnement
 cp .env.example .env
-# → Renseignez SESSION_ID, OWNER_NUMBER, PREFIX, etc.
 
-# 4. Démarrer le bot
+# 4. Lancer la vérification de syntaxe et les tests automatisés
+npm run check
+npm test
+
+# 5. Démarrer le serveur
 npm start
 ```
 
-Au premier démarrage, un QR code (ou pairing code) s'affiche dans le terminal : scannez-le depuis WhatsApp (**Appareils liés**) pour connecter le bot.
+---
+
+## 🔐 Variables d'Environnement Principales
+
+| Variable | Description | Valeur par défaut |
+|---|---|---|
+| `PORT` | Port d'écoute du serveur HTTP / API | `20338` |
+| `API_KEY` | Clé d'authentification des routes `/admin/*` | `anos-admin-secret-key-2026` |
+| `MAX_SESSIONS` | Limite logique maximale de sessions enregistrées | `1000` |
+| `MAX_ACTIVE_CONNECTIONS` | Limite de connexions WhatsApp actives simultanées | `500` |
+| `MAX_RESTART_ATTEMPTS` | Nombre max de tentatives de reconnexion avant pause | `8` |
+| `INITIAL_RECONNECT_DELAY_MS` | Délai initial du backoff (ms) | `2000` |
+| `MAX_RECONNECT_DELAY_MS` | Plafond maximal du délai de reconnexion (ms) | `60000` |
+| `RECONNECT_JITTER_RATIO` | Ratio de variation aléatoire du délai ($\pm$) | `0.3` |
+| `AUTO_DELETE_ON_LOGOUT` | Suppression auto des fichiers si 401/loggedOut | `true` |
+| `BATCH_RESTORE_SIZE` | Taille des lots de restauration au boot | `20` |
+| `BATCH_RESTORE_DELAY_MS` | Intervalle entre chaque lot de restauration (ms) | `300` |
+| `MEDIA_CONCURRENCY_LIMIT` | Limite de traitement média simultané | `5` |
 
 ---
 
-## ⚙️ Configuration
+## 🔄 Cycle de Vie d'une Session
 
-Les principales variables d'environnement (fichier `.env`) :
-
-| Variable | Description |
-|---|---|
-| `SESSION_ID` | Identifiant de session pour l'authentification |
-| `PREFIX` | Préfixe des commandes (par défaut `.`) |
-| `OWNER_NUMBER` | Numéro WhatsApp du propriétaire du bot |
-| `MONGODB_URI` | Chaîne de connexion MongoDB (persistance) |
-| `WELCOME_ENABLE` / `WELCOME_MSG` | Message de bienvenue dans les groupes |
-| `GOODBYE_ENABLE` / `GOODBYE_MSG` | Message d'au revoir dans les groupes |
-| `AUTO_TYPING` | Simulation d'écriture automatique |
-| `AUTO_VIEW_STATUS` / `AUTO_LIKE_STATUS` | Interaction automatique avec les statuts |
-| `BOT_PP` | Photo de profil personnalisée du bot |
-
-> ⚠️ Ne partagez jamais votre fichier `.env` ni votre `SESSION_ID` publiquement.
-
----
-
-## ➕ Ajouter une nouvelle commande
-
-Le bot charge automatiquement tous les fichiers `.js` du dossier `plugins/`. Il suffit donc de :
-
-1. Créer un fichier dans `plugins/` (ex : `plugins/hello.js`)
-2. Utiliser la structure `cmd({...}, async (conn, mek, m, { reply, args, from }) => {...})`
-3. Redémarrer le bot
-
-Aucune autre configuration n'est nécessaire.
-
----
-
-## 📁 Structure du projet
-
+```text
+[ Nouvel Utilisateur ]
+         │
+         ▼
+  pending_pairing ──(Code généré)──► WhatsApp Web
+         │                                  │
+         │ (Appairage réussi)               │
+         ▼                                  ▼
+      connecting ─────────────────────►   open ◄────────┐
+         │                                  │           │
+         │ (Erreur réseau temporaire)       │           │
+         ▼                                  ▼           │
+    reconnecting ◄──────────────────────────┘           │
+         │                                              │
+         ├─► Backoff avec Jitter (2s → 60s) ────────────┘
+         │
+         ├─► Max tentatives atteintes
+         │          │
+         │          ▼
+         │       paused (Credentials conservés sur disque)
+         │
+         ▼ (Déconnexion définitive : 401 / loggedOut / badSession / /disconnect)
+      deleting (Procédure en 18 étapes : arrêt timers, purge listeners, purge RAM, fs.remove)
+         │
+         ▼
+     [ DÉTRUITE ] (Dossier effacé, audit consigné)
 ```
-ANOS_VOLDIGOAD_MINI_MD/
-├── plugins/          # Toutes les commandes du bot
-├── lib/              # Fonctions utilitaires internes
-├── config/           # Configuration de l'identité du bot
-├── data/             # Données persistantes
-├── config.js         # Configuration principale
-├── index.js          # Point d'entrée
-├── main.js           # Chargement des plugins & logique du bot
-└── package.json
+
+---
+
+## 🌐 Endpoints API
+
+### Routes Publiques
+- `GET /` — Interface web de pairing avec navigation par étapes
+- `GET /code?number=509XXXXXXXX` — Génération d'un code de pairing (avec rate limit)
+- `GET /ping` — Sonde de santé minimale
+- `GET /admin` — Panneau d'administration web
+
+### Routes Privées (Header `x-api-key: VOTRE_CLE`)
+- `GET /admin/health` — Métriques système complètes (utilisateurs, connexions, RAM, CPU, Event Loop Lag)
+- `GET /admin/sessions` — Liste détaillée de toutes les sessions connues
+- `GET /admin/sessions/:number` — Détail d'une session
+- `POST /admin/sessions/:number/restart` — Redémarrage d'une session
+- `DELETE /admin/sessions/:number` — Suppression définitive et purge des fichiers
+- `GET /admin/logs/:number` — Dernières lignes de journalisation de la session
+- `GET /admin/deletions` — Journal d'audit des sessions supprimées
+
+---
+
+## 🧪 Tests & Benchmark
+
+```bash
+# Vérification de syntaxe JavaScript
+npm run check
+
+# Suite de tests automatisée (16 tests unitaires et d'intégration)
+npm test
+
+# Benchmark de charge progressive (10 à 1000 sessions)
+npm run benchmark
 ```
 
 ---
 
-## 🤝 Contribuer
-
-Les contributions sont les bienvenues ! Pour proposer une amélioration :
-
-1. Forkez le dépôt
-2. Créez une branche (`git checkout -b feature/ma-fonctionnalite`)
-3. Committez vos changements
-4. Ouvrez une Pull Request
-
----
-
-## 📄 Licence
-
-Ce projet est distribué sous licence **MIT** — libre d'utilisation, de modification et de distribution.
-
----
-
-<div align="center">
-
-**Développé avec ❤️ par GoldenBoy DEV — 𝐀𝐍𝐎𝐒_𝐕𝐎𝐋𝐃𝐈𝐆𝐎𝐀𝐃_𝐌𝐈𝐍𝐈_𝐌𝐃**
-
-</div>
+## 📜 Licence
+Projet distribué sous licence MIT. Développé par **GoldenBoy DEV™**.
